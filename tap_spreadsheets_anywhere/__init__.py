@@ -62,30 +62,31 @@ def discover(config):
         try:
             modified_since = dateutil.parser.parse(table_spec['start_date'])
             target_files = file_utils.get_matching_objects(table_spec, modified_since)
-            sample_rate = table_spec.get('sample_rate',5)
-            max_sampling_read = table_spec.get('max_sampling_read', 1000)
-            max_sampled_files = table_spec.get('max_sampled_files', 50)
-            samples = file_utils.sample_files(table_spec, target_files,sample_rate=sample_rate,
-                                              max_records=max_sampling_read, max_files=max_sampled_files)
-            schema = generate_schema(table_spec, samples)
-            stream_metadata = []
-            key_properties = table_spec.get('key_properties', [])
-            streams.append(
-                CatalogEntry(
-                    tap_stream_id=table_spec['name'],
-                    stream=table_spec['name'],
-                    schema=schema,
-                    key_properties=key_properties,
-                    metadata=stream_metadata,
-                    replication_key=None,
-                    is_view=None,
-                    database=None,
-                    table=None,
-                    row_count=None,
-                    stream_alias=None,
-                    replication_method=None,
+            if target_files:
+                sample_rate = table_spec.get('sample_rate',5)
+                max_sampling_read = table_spec.get('max_sampling_read', 1000)
+                max_sampled_files = table_spec.get('max_sampled_files', 50)
+                samples = file_utils.sample_files(table_spec, target_files,sample_rate=sample_rate,
+                                                  max_records=max_sampling_read, max_files=max_sampled_files)
+                schema = generate_schema(table_spec, samples)
+                stream_metadata = []
+                key_properties = table_spec.get('key_properties', [])
+                streams.append(
+                    CatalogEntry(
+                        tap_stream_id=table_spec['name'],
+                        stream=table_spec['name'],
+                        schema=schema,
+                        key_properties=key_properties,
+                        metadata=stream_metadata,
+                        replication_key=None,
+                        is_view=None,
+                        database=None,
+                        table=None,
+                        row_count=None,
+                        stream_alias=None,
+                        replication_method=None,
+                    )
                 )
-            )
         except Exception as err:
             LOGGER.error(f"Unable to write Catalog entry for '{table_spec['name']}' - it will be skipped due to error {err}")
 
