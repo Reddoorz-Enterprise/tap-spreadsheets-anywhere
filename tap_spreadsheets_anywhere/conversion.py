@@ -10,11 +10,11 @@ def convert_row(row, schema):
     t_schema = deepcopy(schema)
     to_return = {}
     for key, value in row.items():
-        if key in t_schema['properties']:
-            field_schema = t_schema['properties'][key]
-            declared_types = field_schema.get('type', ['null', 'string'])
-        else:
-            declared_types = ['string','null']
+#         if key in t_schema['properties']:
+#             field_schema = t_schema['properties'][key]
+#             declared_types = field_schema.get('type', ['null', 'string'])
+#         else:
+        declared_types = ['string','null']
 
         LOGGER.debug('Converting {} value {} to {}'.format(key, value, declared_types))
         coerced = coerce(value, declared_types)
@@ -110,22 +110,22 @@ def pick_datatype(counts,prefer_number_vs_integer=False):
     """
     to_return = 'string'
 
-    if len(counts) == 1:
-        if counts.get('integer', 0) > 0:
-            to_return = 'number' if prefer_number_vs_integer else 'integer'
-        elif counts.get('number', 0) > 0:
-            to_return = 'number'
-        elif counts.get('date-time', 0) > 0:
-            to_return = 'date-time'
-        elif counts.get('string', 0) <= 0:
-            LOGGER.warning(f"Unexpected data type encountered in histogram {counts}. Defaulting type to String.")
+#     if len(counts) == 1:
+#         if counts.get('integer', 0) > 0:
+#             to_return = 'number' if prefer_number_vs_integer else 'integer'
+#         elif counts.get('number', 0) > 0:
+#             to_return = 'number'
+#         elif counts.get('date-time', 0) > 0:
+#             to_return = 'date-time'
+#         elif counts.get('string', 0) <= 0:
+#             LOGGER.warning(f"Unexpected data type encountered in histogram {counts}. Defaulting type to String.")
 
-    elif (len(counts) == 2 and
-          counts.get('integer', 0) > 0 and
-          counts.get('number', 0) > 0):
-        to_return = 'number'
-    else:
-        LOGGER.debug(f"Ambiguous combination of data type detected: {counts}. Defaulting type to String.")
+#     elif (len(counts) == 2 and
+#           counts.get('integer', 0) > 0 and
+#           counts.get('number', 0) > 0):
+#         to_return = 'number'
+#     else:
+#         LOGGER.debug(f"Ambiguous combination of data type detected: {counts}. Defaulting type to String.")
 
     return to_return
 
